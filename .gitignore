@@ -2,6 +2,8 @@
 #######################
 venv/
 site/
+config.py
+oracle.py
 
 # Compiled source #
 ###################
