@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+ <meta charset="utf-8">
+ <meta name="viewport"  content="width=device-width, initial-scale=1">
+
+ <link rel="icon"       href="/favicon.ico">
+ <link rel="stylesheet" href="/uikit/uikit.min.css">
+
+ <script src="/uikit/uikit.min.js"></script>
+ <script src="/uikit/uikit-icons.min.js"></script>
+ <script src="/uikit/jquery.js"></script>
+
+ <title>Start Page</title>
+
+</head>
+<body class="uk-flex uk-flex-center uk-flex-middle uk-background-muted " data-uk-height-viewport>
+<pre><h4>Documentation</h4>
+<a href="/docs/swagger">/docs/swagger</a>              - Documentation (Swagger)
+<a href="/docs">/docs</a>                      - Documentation (ReDocs)
+<h4>Authentication</h4>
+<a href="/auth/logon/logon.html">/auth/logon/logon.html</a>     - Website for PAM Authentication                 (will redirect if logged on)
+<a href="/auth/logon/challenge.html">/auth/logon/challenge.html</a> - Website for Email Challenge Authentication     (will redirect if logged on)
+<a href="/auth/logon/apikey.html">/auth/logon/apikey.html</a>    - Website for API Key Authentication             (will redirect if logged on)
+<a href="/auth/logon/apifile.html">/auth/logon/apifile.html</a>   - Website for API Key File Upload Authentication (will redirect if logged on)
+<a href="/auth/logon/SCHOOL1.html">/auth/logon/SCHOOL1.html</a>      - Website for SCHOOL1 SSO Authentication            (will redirect if logged on)
+
+<a href="/auth/logon/su.html">/auth/logon/su.html</a>        - Website for Admin SU (Switch User)
+<a href="/auth/logon/return.html">/auth/logon/return.html</a>    - Website for Admin SU Return
+<a href="/auth/logon/logoff.html">/auth/logon/logoff.html</a>    - Website for Logoff
+
+<a href="/auth/key">/auth/key</a>                  - Show User Info
+<a href="/auth/info">/auth/info</a>                 - Show User and Site Info (used on auth websites)
+<a href="/auth/rekey">/auth/rekey</a>                - Reset API Key
+
+/auth/access/list/&lt;user&gt;                    - Lists Accesses (requires admin for other users)
+/auth/access/add/&lt;user&gt;/&lt;access&gt;/&lt;value&gt;    - Add/Modify Access (requires admin)
+/auth/access/remove/&lt;user&gt;/&lt;access&gt;/&lt;value&gt; - Remove Access (requires admin)
+<h4>API Key</h4><p id=akey>Pending jquery response...</p><h4>Logged on User Information</h4><p id=info>Pending jquery response...</p>
+
+<h4>Schedules</h4>
+<b>Semester Information</b>
+/&lt;apikey&gt;/sched/school/&lt;schoolname&gt;
+example: <a href="/aaaa/sched/school/SCHOOL1">/&lt;apikey&gt;/sched/school/SCHOOL1</a>
+example: <a href="/aaaa/sched/school/SCHOOL2">/&lt;apikey&gt;/sched/school/SCHOOL2</a>
+
+<b>Course Information</b>
+/&lt;apikey&gt;/sched/course/&lt;coursenum&gt;
+example: <a href="/aaaa/sched/course/COURSE1">/&lt;apikey&gt;/sched/course/COURSE1</a>
+/&lt;apikey&gt;/sched/course/&lt;coursenum&gt;/&lt;instructor&gt;
+example: <a href="/aaaa/sched/course/COURSE1/INSTRUCTOR1">/&lt;apikey&gt;/sched/course/COURSE1/INSTRUCTOR1</a>
+/&lt;apikey&gt;/sched/course/&lt;schoolname&gt;
+example: <a href="/aaaa/sched/course/SCHOOL2">/&lt;apikey&gt;/sched/course/SCHOOL2</a>
+
+<b>Student Info and Class Schedules</b>
+/&lt;apikey&gt;/sched/student/&lt;username&gt;
+example: <a href="/aaaa/sched/student/STUDENT1">/&lt;apikey&gt;/sched/student/STUDENT1</a>
+/&lt;apikey&gt;/sched/student/&lt;username&gt;/&lt;course&gt;
+example: <a href="/aaaa/sched/student/STUDENT1/COURSE1">/&lt;apikey&gt;/sched/student/STUDENT1/COURSE1</a>
+/&lt;apikey&gt;/sched/student/&lt;schoolname&gt;
+example: <a href="/aaaa/sched/student/SCHOOL2">/&lt;apikey&gt;/sched/student/SCHOOL2</a>
+
+<b>Instructor Info and Class Schedules</b>
+/&lt;apikey&gt;/sched/instructor/&lt;instructor&gt;
+example: <a href="/aaaa/sched/instructor/INSTRUCTOR1">/&lt;apikey&gt;/sched/instructor/INSTRUCTOR1</a>
+/&lt;apikey&gt;/sched/instructor/&lt;instructor&gt;/&lt;course&gt;
+example: <a href="/aaaa/sched/instructor/INSTRUCTOR1/COURSE1">/&lt;apikey&gt;/sched/instructor/INSTRUCTOR1/COURSE1</a>
+/&lt;apikey&gt;/sched/instructor/&lt;instructor&gt;/&lt;course&gt;/&lt;section&gt;
+example: <a href="/aaaa/sched/instructor/INSTRUCTOR1/COURSE1/2141">/&lt;apikey&gt;/sched/instructor/INSTRUCTOR1/COURSE1/2141</a>
+/&lt;apikey&gt;/sched/instructor/&lt;schoolname&gt;
+example: <a href="/aaaa/sched/instructor/SCHOOL2">/&lt;apikey&gt;/sched/instructor/SCHOOL2</a>
+
+<b>Room Utilization</b>
+/&lt;apikey&gt;/sched/room/&lt;roomname&gt;
+example: <a href="/aaaa/sched/room/ROOM1">/&lt;apikey&gt;/sched/room/ROOM1</a>
+
+<b>Department Listings</b>
+/&lt;apikey&gt;/sched/department/&lt;schoolname&gt;
+example: <a href="/aaaa/sched/department/SCHOOL1">/&lt;apikey&gt;/sched/department/SCHOOL1</a>
+example: <a href="/aaaa/sched/department/SCHOOL2">/&lt;apikey&gt;/sched/department/SCHOOL2</a>
+</pre>
+<br><br><br>
+<script>
+
+$.ajax({
+  url: '/auth/key',
+  method: 'GET',
+  success: function(result) {
+    $('#info').html(JSON.stringify(result, null, 2));
+    console.log(result);
+    console.log(result['data']['apikey']);
+    $('#akey').html(result['data']['apikey']);
+    if (result['data']['apikey']) {
+      const links = document.querySelectorAll('a[href]');
+      links.forEach(link => {
+        let href = link.getAttribute('href');
+        const newHref = href.replace('/aaaa/', '/'+result['data']['apikey']+'/');
+        if (newHref !== href) {
+          link.setAttribute('href', newHref);
+          link.textContent = link.textContent.replace('<apikey>', result['data']['apikey']);
+        }
+      });
+    }
+  }
+});
+
+</script>
