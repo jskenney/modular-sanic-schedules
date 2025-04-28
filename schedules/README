@@ -1,0 +1,7 @@
+These scripts will take data that has already been loaded into the MySQL
+sched tables (see setup/sched_tables.sql) and load them into memcached.
+
+You will need another script to load semester course schedules into
+the MySQL tables following the table layout provided.
+
+Add a soft link to your config.py file in this directory.
