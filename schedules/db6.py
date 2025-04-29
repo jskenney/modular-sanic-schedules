@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import os, importlib
+import os, importlib.util
 
 if 'SANIC_CONFIG_FILE' in os.environ:
     spec = importlib.util.spec_from_file_location("myconfigs", os.environ['SANIC_CONFIG_FILE'])

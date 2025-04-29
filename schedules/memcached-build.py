@@ -1,6 +1,6 @@
 DEBUG_ALLOW = True
 
-import os, importlib, time, sys, json, copy
+import os, importlib.util, time, sys, json, copy
 
 if 'SANIC_CONFIG_FILE' in os.environ:
     spec = importlib.util.spec_from_file_location("myconfigs", os.environ['SANIC_CONFIG_FILE'])
