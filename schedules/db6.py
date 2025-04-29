@@ -1,12 +1,18 @@
 #!/usr/bin/python3
 
-from config import db_settings
+import os, importlib
 
-# Configuration settings for database connection!
-dbuser = db_settings['DB_USER']
-dbpass = db_settings['DB_PASS']
-dbhost = db_settings['DB_HOST']
-dbname = db_settings['DB_NAME']
+if 'SANIC_CONFIG_FILE' in os.environ:
+    spec = importlib.util.spec_from_file_location("myconfigs", os.environ['SANIC_CONFIG_FILE'])
+    config = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(config)
+else:
+    import config
+
+dbuser = config.db_settings['DB_USER']
+dbpass = config.db_settings['DB_PASS']
+dbhost = config.db_settings['DB_HOST']
+dbname = config.db_settings['DB_NAME']
 
 # To import from this library,
 #   1. edit the configuration items above

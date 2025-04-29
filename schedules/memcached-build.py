@@ -1,7 +1,13 @@
 DEBUG_ALLOW = True
 
-from config import db_settings, memcached_settings
-import os, time, sys, json, copy
+import os, importlib, time, sys, json, copy
+
+if 'SANIC_CONFIG_FILE' in os.environ:
+    spec = importlib.util.spec_from_file_location("myconfigs", os.environ['SANIC_CONFIG_FILE'])
+    config = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(config)
+else:
+    import config
 
 ###############################################################################
 from db6 import db as mysql
@@ -9,7 +15,7 @@ print(time.asctime(time.localtime(time.time())), "Connected to MySQL")
 
 ###############################################################################
 from pymemcache.client import base as mcachesrv
-mcache = mcachesrv.Client((memcached_settings['MEMCACHED_SERVER'], memcached_settings['MEMCACHED_PORT']))
+mcache = mcachesrv.Client((config.memcached_settings['MEMCACHED_SERVER'], config.memcached_settings['MEMCACHED_PORT']))
 print(time.asctime(time.localtime(time.time())), "Connected to MemCached")
 
 ###############################################################################
