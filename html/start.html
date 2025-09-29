@@ -33,10 +33,11 @@
 <a href="/auth/info">/auth/info</a>                 - Show User and Site Info (used on auth websites)
 <a href="/auth/rekey">/auth/rekey</a>                - Reset API Key
 
-/auth/access/list/&lt;user&gt;                    - Lists Accesses (requires admin for other users)
-/auth/access/add/&lt;user&gt;/&lt;access&gt;/&lt;value&gt;    - Add/Modify Access (requires admin)
-/auth/access/remove/&lt;user&gt;/&lt;access&gt;/&lt;value&gt; - Remove Access (requires admin)
 <h4>API Key</h4><p id=akey>Pending jquery response...</p><h4>Logged on User Information</h4><p id=info>Pending jquery response...</p>
+
+<h3>Endpoints below require an API key, key is ignored if a valid web session is found.</h3><h4>Access Endpoints</h4>/&lt;apikey&gt;/auth/access/list/&lt;user&gt;                    - Lists Accesses (requires admin for other users)
+/&lt;apikey&gt;/auth/access/add/&lt;user&gt;/&lt;access&gt;/&lt;value&gt;    - Add/Modify Access (requires admin)
+/&lt;apikey&gt;/auth/access/remove/&lt;user&gt;/&lt;access&gt;/&lt;value&gt; - Remove Access (requires admin)<h4>Course Schedule Endpoints</h4>
 
 <h4>Schedules</h4>
 <b>Semester Information</b>
