@@ -18,7 +18,7 @@ async def query_memcache(key, endpoint, request):
 sub_bp = Blueprint("schedules", url_prefix="/")
 
 @sub_bp.route("/<apikey>/sched/school/<schoolid>", methods=['GET'])
-@openapi.summary("Provide current semester information")
+@openapi.summary("Retrieve current semester information")
 @openapi.description("returns: {'year': 'XXXX', 'semester': 'XXXX', 'block': 'XXXX'}")
 async def schedules_school(request, apikey, schoolid):
     endpoint = '/<apikey>/sched/school/'+schoolid
@@ -31,7 +31,7 @@ async def schedules_school(request, apikey, schoolid):
     return res
 
 @sub_bp.route("/<apikey>/sched/room/<roomnum>", methods=['GET'])
-@openapi.summary("Provide room utilization")
+@openapi.summary("Retrieve room utilization")
 @openapi.description("""returns:
 {
     "dayofweek": {
@@ -113,7 +113,7 @@ async def schedules_school(request, apikey, coursenbr, instructor):
 # # api: /api/sched/student/<username>/[course]
 # student:<username> and student:<username>:<course>
 @sub_bp.route('/<apikey>/sched/student/<username>', methods=['GET'], name='sched_student')
-@openapi.summary("List a students schedule and associated instructors")
+@openapi.summary("List specific student schedule with associated instructor information")
 @openapi.description("""returns:
 {'user': 'XXXX', 'name': 'XXXXX', 'school': 'XXXX'
   'courses': {
@@ -135,7 +135,7 @@ async def schedule_student(request, apikey, username):
     return res
 
 @sub_bp.route('/<apikey>/sched/student/<username>/<course>', methods=['GET'], name='sched_student_course')
-@openapi.summary("List a students schedule and associated instructors for a specific course")
+@openapi.summary("List specific student schedule with associated instructor information for a specific course")
 @openapi.description("""returns:
 {'user': 'XXXX', 'name': 'XXXXX', 'school': 'XXXX'
   'courses': {
@@ -158,7 +158,7 @@ async def schedule_student_course(request, apikey, username, course):
 
 # # api: /api/sched/instructor/<username>/[course]/[section]
 @sub_bp.route('/<apikey>/sched/instructor/<username>', methods=['GET'], name='sched_instructor')
-@openapi.summary("List an instructors schedule and associated students")
+@openapi.summary("List an instructors schedule with associated students")
 @openapi.description("""returns:
 {'user': 'XXXX', 'name': 'XXXX', 'department': 'XXXX', 'school': 'XXXX', 'year': 'XXXX', 'semester': 'XXXX', 'BLOCK': 'XXXX'
   'courses': {
@@ -182,7 +182,7 @@ async def schedule_instructor(request, apikey, username):
     return res
 
 @sub_bp.route('/<apikey>/sched/instructor/<username>/<course>', methods=['GET'], name='sched_instructor_course')
-@openapi.summary("List an instructors schedule and associated students for a specific course")
+@openapi.summary("List an instructors schedule with associated students for a specific course")
 @openapi.description("""returns:
 {'user': 'XXXX', 'name': 'XXXX', 'department': 'XXXX', 'school': 'XXXX', 'year': 'XXXX', 'semester': 'XXXX', 'BLOCK': 'XXXX'
   'courses': {
@@ -206,7 +206,7 @@ async def schedule_instructor_course(request, apikey, username, course):
     return res
 
 @sub_bp.route('/<apikey>/sched/instructor/<username>/<course>/<section>', methods=['GET'], name='sched_instructor_course_section')
-@openapi.summary("List an instructors schedule and associated students for a specific section")
+@openapi.summary("List an instructors schedule with associated students for a specific section")
 @openapi.description("""returns:
 {'user': 'XXXX', 'name': 'XXXX', 'department': 'XXXX', 'school': 'XXXX', 'year': 'XXXX', 'semester': 'XXXX', 'BLOCK': 'XXXX'
   'courses': {
@@ -230,7 +230,7 @@ async def schedule_instructor_course(request, apikey, username, course, section)
     return res
 
 @sub_bp.route('/<apikey>/sched/department/instructor/<school>', methods=['GET'], name='schedule_department_instructor')
-@openapi.summary("List all instructors at a school")
+@openapi.summary("List all instructors within a school")
 @openapi.description("""returns: {
     "departmentName": {
       "instructorlogin": {
@@ -248,7 +248,7 @@ async def schedule_department_instructor(request, apikey, school):
     return res
 
 @sub_bp.route('/<apikey>/sched/department/<school>', methods=['GET'], name='schedule_department')
-@openapi.summary("List all departments at a school")
+@openapi.summary("List all departments within a school")
 @openapi.description("""returns: ["DEPT1", "DEPT2", ...] """)
 async def schedule_department(request, apikey, school):
     endpoint = '/<apikey>/sched/department/'+school
