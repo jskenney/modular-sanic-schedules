@@ -64,6 +64,8 @@ if DEBUG_ALLOW:
         results = {'user': username,
                    'name': name,
                    'school': school,
+                   'type': 'student',
+                   'department': '',
                    'year': SCHOOL_INFO[school]['year'], 'semester': SCHOOL_INFO[school]['semester'], 'block': SCHOOL_INFO[school]['block'],
                    'courses':{}}
         query = 'SELECT course, section, location, time, department, title FROM sched_semester LEFT JOIN sched_section USING (school, course, section) LEFT JOIN sched_course USING (school, course) WHERE student=%s'
@@ -76,7 +78,9 @@ if DEBUG_ALLOW:
             section = srow['section']
             del(srow['course'])
             srow['instructors'] = {}
-            results['courses'][course] = srow
+            srow['students'] = {username: name}
+            results['courses'][course] = {'department': srow['department'], 'title': srow['title'], 'sections': {} }
+            results['courses'][course]['sections'][section] = srow
             iquery = 'SELECT instructor, name, department, pri FROM sched_section_instructors LEFT JOIN sched_instructor USING (school, instructor) WHERE course = %s AND section = %s AND school = %s'
             ivalues = (course, section, school, )
             idata, error, warning = mysql.query_dict(iquery, ivalues)
@@ -86,12 +90,21 @@ if DEBUG_ALLOW:
                 instructor = irow['instructor']
                 del(irow['instructor'])
                 srow['instructors'][instructor] = irow
-            results['courses'][course] = srow
+            del(srow['department'])
+            del(srow['title'])
+            del(srow['section'])
+            results['courses'][course]['sections'][section] = srow
         mcache.delete(key)
         mcache.set(key, results)
+        ukey = 'user:'+username
+        mcache.delete(ukey)
+        mcache.set(ukey, results)
         for c in results['courses']:
             nresults = {'user': username, 'name': name, 'school': school, 'year': SCHOOL_INFO[school]['year'], 'semester': SCHOOL_INFO[school]['semester'], 'block': SCHOOL_INFO[school]['block'], 'courses': {}}
             nresults['courses'][c] = results['courses'][c]
+            nkey = 'user:'+username+':'+c
+            mcache.delete(nkey)
+            mcache.set(nkey, nresults)
             nkey = 'student:'+username+':'+c
             mcache.delete(nkey)
             mcache.set(nkey, nresults)
@@ -123,6 +136,7 @@ if DEBUG_ALLOW:
                    'name': row['name'],
                    'department': row['department'],
                    'school': row['school'],
+                   'type': 'instructor',
                    'year': SCHOOL_INFO[school]['year'], 'semester': SCHOOL_INFO[school]['semester'], 'block': SCHOOL_INFO[school]['block'],
                    'courses': {}
                   }
@@ -149,12 +163,28 @@ if DEBUG_ALLOW:
             cdata, error, warning = mysql.query_dict(query, values)
             for crow in cdata:
                 results['courses'][course]['sections'][section]['students'][crow['student']] = crow['name']
+            iquery = 'SELECT instructor, name, department, pri FROM sched_section_instructors LEFT JOIN sched_instructor USING (school, instructor) WHERE course = %s AND section = %s AND school = %s'
+            ivalues = (course, section, school, )
+            idata, error, warning = mysql.query_dict(iquery, ivalues)
+            if error != '' or warning is not None:
+                print(' -', ['DEBUG:', error, warning])
+            results['courses'][course]['sections'][section]['instructors'] = {}
+            for irow in idata:
+                instructor = irow['instructor']
+                del(irow['instructor'])
+                results['courses'][course]['sections'][section]['instructors'][instructor] = irow
         mcache.delete(key)
         mcache.set(key, results)
+        ukey = 'user:'+row['instructor']
+        mcache.delete(ukey)
+        mcache.set(ukey, results)
         for c in results['courses']:
             nresults = {'user': results['user'], 'name': results['name'], 'department': results['department'], 'school': results['school'], 'year': SCHOOL_INFO[school]['year'], 'semester': SCHOOL_INFO[school]['semester'], 'block': SCHOOL_INFO[school]['block'], 'courses': {}}
-            nkey = key+':'+c
             nresults['courses'][c] = results['courses'][c]
+            nkey = ukey+':'+c
+            mcache.delete(nkey)
+            mcache.set(nkey, nresults)
+            nkey = key+':'+c
             mcache.delete(nkey)
             mcache.set(nkey, nresults)
         for c in results['courses']:
@@ -163,6 +193,9 @@ if DEBUG_ALLOW:
                 nresults = {'user': results['user'], 'name': results['name'], 'department': results['department'], 'school': results['school'], 'year': SCHOOL_INFO[school]['year'], 'semester': SCHOOL_INFO[school]['semester'], 'block': SCHOOL_INFO[school]['block'], 'courses': {}}
                 nresults['courses'][c] = {'title': oc['title'], 'department':oc['department'], 'sections': {}}
                 nresults['courses'][c]['sections'][s] = oc['sections'][s]
+                nkey = ukey+':'+c+':'+s
+                mcache.delete(nkey)
+                mcache.set(nkey, nresults)
                 nkey = key+':'+c+':'+s
                 mcache.delete(nkey)
                 mcache.set(nkey, nresults)
@@ -229,8 +262,8 @@ if DEBUG_ALLOW:
             if error != '' or warning is not None:
                 print(' -', ['DEBUG:', error, warning])
             for vrow in vdata:
-                results['sections'][section]['students'][vrow['student']] = {'name': vrow['name']}
-                courseCache[instructor]['sections'][section]['students'][vrow['student']] = {'name': vrow['name']}
+                results['sections'][section]['students'][vrow['student']] = vrow['name']
+                courseCache[instructor]['sections'][section]['students'][vrow['student']] = vrow['name']
         mcache.delete(key)
         mcache.set(key, results)
         for instructor in courseCache:
@@ -311,6 +344,25 @@ if DEBUG_ALLOW:
         key = 'department:instructors:'+school
         mcache.delete(key)
         mcache.set(key, results)
+
+###############################################################################
+print(time.asctime(time.localtime(time.time())), 'Processing department:instructors:<school>:<department>')
+if DEBUG_ALLOW:
+    for school in SCHOOL_INFO:
+        query = 'SELECT * FROM sched_instructor WHERE school=%s ORDER BY department'
+        values = (school,)
+        data, error, warning = mysql.query_dict(query, values)
+        if error != '' or warning is not None:
+            print(' -', ['DEBUG:', error, warning])
+        results = {}
+        for row in data:
+            if row['department'] not in results:
+                results[row['department']] = {}
+            results[row['department']][row['instructor']] = {'name': row['name'], 'school': row['school']}
+        for dept in results:
+            key = 'department:instructors:'+school+':'+dept.lower().replace(' ','_')
+            mcache.delete(key)
+            mcache.set(key, {dept: results[dept]})
 
 ###############################################################################
 print(time.asctime(time.localtime(time.time())), 'Processing department:<school>')

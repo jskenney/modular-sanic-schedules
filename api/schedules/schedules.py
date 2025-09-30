@@ -110,16 +110,45 @@ async def schedules_school(request, apikey, coursenbr, instructor):
     res = await query_memcache(key, endpoint, request)
     return res
 
+# # api: /api/sched/user
+@sub_bp.route('/<apikey>/sched/user', methods=['GET'], name='sched_user_direct')
+@openapi.summary("List specific student/instructor schedule with associated instructor information")
+@openapi.description("""returns:
+{'user': 'XXXX', 'name': 'XXXXX', 'school': 'XXXX', 'type': 'student/instructor', 'department': 'XXXXX',
+  'courses': {
+    'course##': {'section': XXXX, 'location': 'XXXX', 'time':'XXXX', 'department': 'XXXXX', 'title': 'XXXXX'
+      'instructors': {
+        'instructorlogin': {'name': 'XXXX', 'pri': 1/0, 'department': 'XXXXX'}
+      },
+      'students': {
+        'studentlogin': 'name'
+      }
+    }
+  }
+}""")
+async def schedule_user_direct(request, apikey):
+    endpoint = '/<apikey>/sched/user'
+    ok, rusername, rapikey, access, info = await request.app.ctx.auth.verifyapi(request, apikey)
+    if not ok:
+        res = response.json({'success': False, 'sent': time.asctime(time.localtime(time.time())), 'endpoint':endpoint, 'message': 'Invalid API Key', 'data': {}})
+        return res
+    key = 'user:'+ rusername
+    res = await query_memcache(key, endpoint, request)
+    return res
+
 # # api: /api/sched/student/<username>/[course]
 # student:<username> and student:<username>:<course>
 @sub_bp.route('/<apikey>/sched/student/<username>', methods=['GET'], name='sched_student')
 @openapi.summary("List specific student schedule with associated instructor information")
 @openapi.description("""returns:
-{'user': 'XXXX', 'name': 'XXXXX', 'school': 'XXXX'
+{'user': 'XXXX', 'name': 'XXXXX', 'school': 'XXXX', 'type': 'student/instructor', 'department': 'XXXXX',
   'courses': {
     'course##': {'section': XXXX, 'location': 'XXXX', 'time':'XXXX', 'department': 'XXXXX', 'title': 'XXXXX'
       'instructors': {
         'instructorlogin': {'name': 'XXXX', 'pri': 1/0, 'department': 'XXXXX'}
+      },
+      'students': {
+        'studentlogin': 'name'
       }
     }
   }
@@ -139,11 +168,14 @@ async def schedule_student(request, apikey, username):
 @sub_bp.route('/<apikey>/sched/student', methods=['GET'], name='sched_student_direct')
 @openapi.summary("List specific student schedule with associated instructor information")
 @openapi.description("""returns:
-{'user': 'XXXX', 'name': 'XXXXX', 'school': 'XXXX'
+{'user': 'XXXX', 'name': 'XXXXX', 'school': 'XXXX', 'type': 'student/instructor', 'department': 'XXXXX',
   'courses': {
     'course##': {'section': XXXX, 'location': 'XXXX', 'time':'XXXX', 'department': 'XXXXX', 'title': 'XXXXX'
       'instructors': {
         'instructorlogin': {'name': 'XXXX', 'pri': 1/0, 'department': 'XXXXX'}
+      },
+      'students': {
+        'studentlogin': 'name'
       }
     }
   }
@@ -161,11 +193,14 @@ async def schedule_student_direct(request, apikey):
 @sub_bp.route('/<apikey>/sched/student/<username>/<course>', methods=['GET'], name='sched_student_course')
 @openapi.summary("List specific student schedule with associated instructor information for a specific course")
 @openapi.description("""returns:
-{'user': 'XXXX', 'name': 'XXXXX', 'school': 'XXXX'
+{'user': 'XXXX', 'name': 'XXXXX', 'school': 'XXXX', 'type': 'student/instructor', 'department': 'XXXXX',
   'courses': {
     'course##': {'section': XXXX, 'location': 'XXXX', 'time':'XXXX', 'department': 'XXXXX', 'title': 'XXXXX'
       'instructors': {
         'instructorlogin': {'name': 'XXXX', 'pri': 1/0, 'department': 'XXXXX'}
+      },
+      'students': {
+        'studentlogin': 'name'
       }
     }
   }
@@ -184,13 +219,14 @@ async def schedule_student_course(request, apikey, username, course):
 @sub_bp.route('/<apikey>/sched/instructor/<username>', methods=['GET'], name='sched_instructor')
 @openapi.summary("List an instructors schedule with associated students")
 @openapi.description("""returns:
-{'user': 'XXXX', 'name': 'XXXX', 'department': 'XXXX', 'school': 'XXXX', 'year': 'XXXX', 'semester': 'XXXX', 'BLOCK': 'XXXX'
+{'user': 'XXXX', 'name': 'XXXXX', 'school': 'XXXX', 'type': 'student/instructor', 'department': 'XXXXX',
   'courses': {
-    'course##': {'department': 'XXXX', 'title': 'XXXX'
-      'sections': {'location': 'XXXX', 'time': 'XXXX', 'pri': '1/0',
-        'students': {
-          'studentlogon': 'studentname'
-        }
+    'course##': {'section': XXXX, 'location': 'XXXX', 'time':'XXXX', 'department': 'XXXXX', 'title': 'XXXXX'
+      'instructors': {
+        'instructorlogin': {'name': 'XXXX', 'pri': 1/0, 'department': 'XXXXX'}
+      },
+      'students': {
+        'studentlogin': 'name'
       }
     }
   }
@@ -209,13 +245,14 @@ async def schedule_instructor(request, apikey, username):
 @sub_bp.route('/<apikey>/sched/instructor', methods=['GET'], name='sched_instructor_direct')
 @openapi.summary("List an instructors schedule with associated students")
 @openapi.description("""returns:
-{'user': 'XXXX', 'name': 'XXXX', 'department': 'XXXX', 'school': 'XXXX', 'year': 'XXXX', 'semester': 'XXXX', 'BLOCK': 'XXXX'
+{'user': 'XXXX', 'name': 'XXXXX', 'school': 'XXXX', 'type': 'student/instructor', 'department': 'XXXXX',
   'courses': {
-    'course##': {'department': 'XXXX', 'title': 'XXXX'
-      'sections': {'location': 'XXXX', 'time': 'XXXX', 'pri': '1/0',
-        'students': {
-          'studentlogon': 'studentname'
-        }
+    'course##': {'section': XXXX, 'location': 'XXXX', 'time':'XXXX', 'department': 'XXXXX', 'title': 'XXXXX'
+      'instructors': {
+        'instructorlogin': {'name': 'XXXX', 'pri': 1/0, 'department': 'XXXXX'}
+      },
+      'students': {
+        'studentlogin': 'name'
       }
     }
   }
@@ -233,13 +270,14 @@ async def schedule_instructor_direct(request, apikey):
 @sub_bp.route('/<apikey>/sched/instructor/<username>/<course>', methods=['GET'], name='sched_instructor_course')
 @openapi.summary("List an instructors schedule with associated students for a specific course")
 @openapi.description("""returns:
-{'user': 'XXXX', 'name': 'XXXX', 'department': 'XXXX', 'school': 'XXXX', 'year': 'XXXX', 'semester': 'XXXX', 'BLOCK': 'XXXX'
+{'user': 'XXXX', 'name': 'XXXXX', 'school': 'XXXX', 'type': 'student/instructor', 'department': 'XXXXX',
   'courses': {
-    'course##': {'department': 'XXXX', 'title': 'XXXX'
-      'sections': {'location': 'XXXX', 'time': 'XXXX', 'pri': '1/0',
-        'students': {
-          'studentlogon': 'studentname'
-        }
+    'course##': {'section': XXXX, 'location': 'XXXX', 'time':'XXXX', 'department': 'XXXXX', 'title': 'XXXXX'
+      'instructors': {
+        'instructorlogin': {'name': 'XXXX', 'pri': 1/0, 'department': 'XXXXX'}
+      },
+      'students': {
+        'studentlogin': 'name'
       }
     }
   }
@@ -257,13 +295,14 @@ async def schedule_instructor_course(request, apikey, username, course):
 @sub_bp.route('/<apikey>/sched/instructor/<username>/<course>/<section>', methods=['GET'], name='sched_instructor_course_section')
 @openapi.summary("List an instructors schedule with associated students for a specific section")
 @openapi.description("""returns:
-{'user': 'XXXX', 'name': 'XXXX', 'department': 'XXXX', 'school': 'XXXX', 'year': 'XXXX', 'semester': 'XXXX', 'BLOCK': 'XXXX'
+{'user': 'XXXX', 'name': 'XXXXX', 'school': 'XXXX', 'type': 'student/instructor', 'department': 'XXXXX',
   'courses': {
-    'course##': {'department': 'XXXX', 'title': 'XXXX'
-      'sections': {'location': 'XXXX', 'time': 'XXXX', 'pri': '1/0',
-        'students': {
-          'studentlogon': 'studentname'
-        }
+    'course##': {'section': XXXX, 'location': 'XXXX', 'time':'XXXX', 'department': 'XXXXX', 'title': 'XXXXX'
+      'instructors': {
+        'instructorlogin': {'name': 'XXXX', 'pri': 1/0, 'department': 'XXXXX'}
+      },
+      'students': {
+        'studentlogin': 'name'
       }
     }
   }
@@ -293,6 +332,24 @@ async def schedule_department_instructor(request, apikey, school):
         res = response.json({'success': False, 'sent': time.asctime(time.localtime(time.time())), 'endpoint':endpoint, 'message': 'Invalid API Key', 'data': {}})
         return res
     key = 'department:instructors:'+school
+    res = await query_memcache(key, endpoint, request)
+    return res
+
+@sub_bp.route('/<apikey>/sched/department/instructor/<school>/<department>', methods=['GET'], name='schedule_department_instructor_department')
+@openapi.summary("List all instructors within a school's department")
+@openapi.description("""returns: {
+    "departmentName": {
+      "instructorlogin": {
+        "name": "XXXX",
+        "school": "XXXX"
+      }, """)
+async def schedule_department_instructor_department(request, apikey, school, department):
+    endpoint = '/<apikey>/sched/department/instructor/'+school+'/'+department.lower().replace(' ','_').replace('%20', '_')
+    ok, rusername, rapikey, access, info = await request.app.ctx.auth.verifyapi(request, apikey)
+    if not ok:
+        res = response.json({'success': False, 'sent': time.asctime(time.localtime(time.time())), 'endpoint':endpoint, 'message': 'Invalid API Key', 'data': {}})
+        return res
+    key = 'department:instructors:'+school+':'+department.lower().replace(' ','_').replace('%20', '_')
     res = await query_memcache(key, endpoint, request)
     return res
 
