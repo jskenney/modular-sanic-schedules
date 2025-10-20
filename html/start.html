@@ -10,7 +10,6 @@
 
   <script src="/uikit/uikit.min.js"></script>
   <script src="/uikit/uikit-icons.min.js"></script>
-  <script src="/uikit/jquery.js"></script>
 
   <title>Start Page</title>
 
@@ -33,7 +32,7 @@
 <a href="/auth/info">/auth/info</a>                 - Show User and Site Info (used on auth websites)
 <a href="/auth/rekey">/auth/rekey</a>                - Reset API Key
 
-<h4>API Key</h4><p id=akey>Pending jquery response...</p><h4>Logged on User Information</h4><p id=info>Pending jquery response...</p>
+<h4>API Key</h4><p id=akey>Pending server response...</p><h4>Logged on User Information</h4><p id=info>Pending server response...</p>
 
 <h3>Endpoints below require an API key, key is ignored if a valid web session is found.</h3><h4>Access Endpoints</h4>/&lt;apikey&gt;/auth/access/list/&lt;user&gt;                    - Lists Accesses (requires admin for other users)
 /&lt;apikey&gt;/auth/access/add/&lt;user&gt;/&lt;access&gt;/&lt;value&gt;    - Add/Modify Access (requires admin)
@@ -87,26 +86,35 @@ example: <a href="/aaaa/sched/department/SCHOOL2">/&lt;apikey&gt;/sched/departme
 <br><br><br>
 <script>
 
-$.ajax({
-  url: '/auth/key',
-  method: 'GET',
-  success: function(result) {
-    $('#info').html(JSON.stringify(result, null, 2));
+fetch('/auth/key')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(result => {
+    document.getElementById('info').innerHTML = JSON.stringify(result, null, 2);
     console.log(result);
-    console.log(result['data']['apikey']);
-    $('#akey').html(result['data']['apikey']);
-    if (result['data']['apikey']) {
+    console.log(result.data.apikey);
+
+    document.getElementById('akey').innerHTML = result.data.apikey;
+
+    if (result.data.apikey) {
       const links = document.querySelectorAll('a[href]');
       links.forEach(link => {
-        let href = link.getAttribute('href');
-        const newHref = href.replace('/aaaa/', '/'+result['data']['apikey']+'/');
+        const href = link.getAttribute('href');
+        const newHref = href.replace('/aaaa/', '/' + result.data.apikey + '/');
+
         if (newHref !== href) {
           link.setAttribute('href', newHref);
-          link.textContent = link.textContent.replace('<apikey>', result['data']['apikey']);
+          link.textContent = link.textContent.replace('<apikey>', result.data.apikey);
         }
       });
     }
-  }
+  })
+  .catch(error => {
+    console.error('Fetch error:', error);
 });
 
 </script>
