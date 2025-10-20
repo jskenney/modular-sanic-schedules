@@ -34,54 +34,54 @@
 
 <h4>API Key</h4><p id=akey>Pending server response...</p><h4>Logged on User Information</h4><p id=info>Pending server response...</p>
 
-<h3>Endpoints below require an API key, key is ignored if a valid web session is found.</h3><h4>Access Endpoints</h4>/&lt;apikey&gt;/auth/access/list/&lt;user&gt;                    - Lists Accesses (requires admin for other users)
-/&lt;apikey&gt;/auth/access/add/&lt;user&gt;/&lt;access&gt;/&lt;value&gt;    - Add/Modify Access (requires admin)
-/&lt;apikey&gt;/auth/access/remove/&lt;user&gt;/&lt;access&gt;/&lt;value&gt; - Remove Access (requires admin)<h4>Course Schedule Endpoints</h4>
+<h3>Endpoints below require an API key, key is ignored if a valid web session is found.</h3><h4>Access Endpoints</h4>/auth/&lt;apikey&gt;/access/list/&lt;user&gt;                    - Lists Accesses (requires admin for other users)
+/auth/&lt;apikey&gt;/access/add/&lt;user&gt;/&lt;access&gt;/&lt;value&gt;    - Add/Modify Access (requires admin)
+/auth/&lt;apikey&gt;/access/remove/&lt;user&gt;/&lt;access&gt;/&lt;value&gt; - Remove Access (requires admin)<h4>Course Schedule Endpoints</h4>
 
 <h4>Schedules</h4>
 <b>Semester Information</b>
-/&lt;apikey&gt;/sched/school/&lt;schoolname&gt;
-example: <a href="/aaaa/sched/school/SCHOOL1">/&lt;apikey&gt;/sched/school/SCHOOL1</a>
-example: <a href="/aaaa/sched/school/SCHOOL2">/&lt;apikey&gt;/sched/school/SCHOOL2</a>
+/sched/&lt;apikey&gt;/school/&lt;schoolname&gt;
+example: <a href="/sched/aaaa/school/SCHOOL1">/sched/&lt;apikey&gt;/school/SCHOOL1</a>
+example: <a href="/sched/aaaa/school/SCHOOL2">/sched/&lt;apikey&gt;/school/SCHOOL2</a>
 
 <b>Course Information</b>
-/&lt;apikey&gt;/sched/course/&lt;coursenum&gt;
-example: <a href="/aaaa/sched/course/COURSE1">/&lt;apikey&gt;/sched/course/COURSE1</a>
-/&lt;apikey&gt;/sched/course/&lt;coursenum&gt;/&lt;instructor&gt;
-example: <a href="/aaaa/sched/course/COURSE1/INSTRUCTOR1">/&lt;apikey&gt;/sched/course/COURSE1/INSTRUCTOR1</a>
-/&lt;apikey&gt;/sched/course/&lt;schoolname&gt;
-example: <a href="/aaaa/sched/course/SCHOOL2">/&lt;apikey&gt;/sched/course/SCHOOL2</a>
+/sched/&lt;apikey&gt;/course/&lt;coursenum&gt;
+example: <a href="/sched/aaaa/course/COURSE1">/sched/&lt;apikey&gt;/course/COURSE1</a>
+/sched/&lt;apikey&gt;/course/&lt;coursenum&gt;/&lt;instructor&gt;
+example: <a href="/sched/aaaa/course/COURSE1/INSTRUCTOR1">/sched/&lt;apikey&gt;/course/COURSE1/INSTRUCTOR1</a>
+/sched/&lt;apikey&gt;/course/&lt;schoolname&gt;
+example: <a href="/sched/aaaa/course/SCHOOL2">/sched/&lt;apikey&gt;/course/SCHOOL2</a>
 
 <b>Student Info and Class Schedules</b>
-/&lt;apikey&gt;/sched/student
-example: <a href="/aaaa/sched/student">/&lt;apikey&gt;/sched/student</a>
-/&lt;apikey&gt;/sched/student/&lt;username&gt;
-example: <a href="/aaaa/sched/student/STUDENT1">/&lt;apikey&gt;/sched/student/STUDENT1</a>
-/&lt;apikey&gt;/sched/student/&lt;username&gt;/&lt;course&gt;
-example: <a href="/aaaa/sched/student/STUDENT1/COURSE1">/&lt;apikey&gt;/sched/student/STUDENT1/COURSE1</a>
-/&lt;apikey&gt;/sched/student/&lt;schoolname&gt;
-example: <a href="/aaaa/sched/student/SCHOOL2">/&lt;apikey&gt;/sched/student/SCHOOL2</a>
+/sched/&lt;apikey&gt;/student
+example: <a href="/sched/aaaa/student">/sched/&lt;apikey&gt;/student</a>
+/sched/&lt;apikey&gt;/student/&lt;username&gt;
+example: <a href="/sched/aaaa/student/STUDENT1">/sched/&lt;apikey&gt;/student/STUDENT1</a>
+/sched/&lt;apikey&gt;/student/&lt;username&gt;/&lt;course&gt;
+example: <a href="/sched/aaaa/student/STUDENT1/COURSE1">/sched/&lt;apikey&gt;/student/STUDENT1/COURSE1</a>
+/sched/&lt;apikey&gt;/student/&lt;schoolname&gt;
+example: <a href="/sched/aaaa/student/SCHOOL2">/sched/&lt;apikey&gt;/student/SCHOOL2</a>
 
 <b>Instructor Info and Class Schedules</b>
-/&lt;apikey&gt;/sched/instructor
-example: <a href="/aaaa/sched/instructor">/&lt;apikey&gt;/sched/instructor</a>
-/&lt;apikey&gt;/sched/instructor/&lt;instructor&gt;
-example: <a href="/aaaa/sched/instructor/INSTRUCTOR1">/&lt;apikey&gt;/sched/instructor/INSTRUCTOR1</a>
-/&lt;apikey&gt;/sched/instructor/&lt;instructor&gt;/&lt;course&gt;
-example: <a href="/aaaa/sched/instructor/INSTRUCTOR1/COURSE1">/&lt;apikey&gt;/sched/instructor/INSTRUCTOR1/COURSE1</a>
-/&lt;apikey&gt;/sched/instructor/&lt;instructor&gt;/&lt;course&gt;/&lt;section&gt;
-example: <a href="/aaaa/sched/instructor/INSTRUCTOR1/COURSE1/2141">/&lt;apikey&gt;/sched/instructor/INSTRUCTOR1/COURSE1/2141</a>
-/&lt;apikey&gt;/sched/instructor/&lt;schoolname&gt;
-example: <a href="/aaaa/sched/instructor/SCHOOL2">/&lt;apikey&gt;/sched/instructor/SCHOOL2</a>
+/sched/&lt;apikey&gt;/instructor
+example: <a href="/sched/aaaa/instructor">/sched/&lt;apikey&gt;/instructor</a>
+/sched/&lt;apikey&gt;/instructor/&lt;instructor&gt;
+example: <a href="/sched/aaaa/instructor/INSTRUCTOR1">/sched/&lt;apikey&gt;/instructor/INSTRUCTOR1</a>
+/sched/&lt;apikey&gt;/instructor/&lt;instructor&gt;/&lt;course&gt;
+example: <a href="/sched/aaaa/instructor/INSTRUCTOR1/COURSE1">/sched/&lt;apikey&gt;/instructor/INSTRUCTOR1/COURSE1</a>
+/sched/&lt;apikey&gt;/instructor/&lt;instructor&gt;/&lt;course&gt;/&lt;section&gt;
+example: <a href="/sched/aaaa/instructor/INSTRUCTOR1/COURSE1/2141">/sched/&lt;apikey&gt;/instructor/INSTRUCTOR1/COURSE1/2141</a>
+/sched/&lt;apikey&gt;/instructor/&lt;schoolname&gt;
+example: <a href="/sched/aaaa/instructor/SCHOOL2">/sched/&lt;apikey&gt;/instructor/SCHOOL2</a>
 
 <b>Room Utilization</b>
-/&lt;apikey&gt;/sched/room/&lt;roomname&gt;
-example: <a href="/aaaa/sched/room/ROOM1">/&lt;apikey&gt;/sched/room/ROOM1</a>
+/sched/&lt;apikey&gt;/room/&lt;roomname&gt;
+example: <a href="/sched/aaaa/room/ROOM1">/sched/&lt;apikey&gt;/room/ROOM1</a>
 
 <b>Department Listings</b>
-/&lt;apikey&gt;/sched/department/&lt;schoolname&gt;
-example: <a href="/aaaa/sched/department/SCHOOL1">/&lt;apikey&gt;/sched/department/SCHOOL1</a>
-example: <a href="/aaaa/sched/department/SCHOOL2">/&lt;apikey&gt;/sched/department/SCHOOL2</a>
+/sched/&lt;apikey&gt;/department/&lt;schoolname&gt;
+example: <a href="/sched/aaaa/department/SCHOOL1">/sched/&lt;apikey&gt;/department/SCHOOL1</a>
+example: <a href="/sched/aaaa/department/SCHOOL2">/sched/&lt;apikey&gt;/department/SCHOOL2</a>
 </pre>
 <br><br><br>
 <script>
