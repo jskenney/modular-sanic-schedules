@@ -136,6 +136,32 @@ async def schedule_user_direct(request, apikey):
     res = await query_memcache(key, endpoint, request)
     return res
 
+# # api: /api/sched/user
+@sub_bp.route('/sched/<apikey>/user/<user>', methods=['GET'], name='sched_user_direct_byname')
+@openapi.summary("List specific student/instructor schedule with associated instructor information")
+@openapi.description("""returns:
+{'user': 'XXXX', 'name': 'XXXXX', 'school': 'XXXX', 'type': 'student/instructor', 'department': 'XXXXX',
+  'courses': {
+    'course##': {'section': XXXX, 'location': 'XXXX', 'time':'XXXX', 'department': 'XXXXX', 'title': 'XXXXX'
+      'instructors': {
+        'instructorlogin': {'name': 'XXXX', 'pri': 1/0, 'department': 'XXXXX'}
+      },
+      'students': {
+        'studentlogin': 'name'
+      }
+    }
+  }
+}""")
+async def schedule_user_direct_byname(request, apikey, user):
+    endpoint = '/sched/<apikey>/user/'+user
+    ok, rusername, rapikey, access, info = await request.app.ctx.auth.verifyapi(request, apikey)
+    if not ok:
+        res = response.json({'success': False, 'sent': time.asctime(time.localtime(time.time())), 'endpoint':endpoint, 'message': 'Invalid API Key', 'data': {}})
+        return res
+    key = 'user:'+ user
+    res = await query_memcache(key, endpoint, request)
+    return res
+
 # # api: /api/sched/student/<username>/[course]
 # student:<username> and student:<username>:<course>
 @sub_bp.route('/sched/<apikey>/student/<username>', methods=['GET'], name='sched_student')
