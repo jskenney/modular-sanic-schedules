@@ -6,120 +6,100 @@
   <meta name="viewport"  content="width=device-width, initial-scale=1">
 
   <link rel="icon"       href="/favicon.ico">
-  <link rel="stylesheet" href="/uikit/uikit.min.css">
-
-  <script src="/uikit/uikit-all.min.js"></script>
 
   <title>Start Page</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 1.5rem; background: #f7f7f8; color: #1b1b1f; }
+    pre { font-size: 0.9rem; line-height: 1.45; overflow-x: auto; }
+    a { color: #0b57d0; }
+  </style>
 
 </head>
-<body class="uk-flex uk-flex-center uk-flex-middle uk-background-muted " data-uk-height-viewport>
+<body>
 <pre><h4>Documentation</h4>
 <a href="/docs/swagger">/docs/swagger</a>              - Documentation (Swagger)
 <a href="/docs">/docs</a>                      - Documentation (ReDocs)
 <h4>Authentication</h4>
-<a href="/auth/logon/logon.html">/auth/logon/logon.html</a>     - Website for PAM Authentication                 (will redirect if logged on)
-<a href="/auth/logon/challenge.html">/auth/logon/challenge.html</a> - Website for Email Challenge Authentication     (will redirect if logged on)
-<a href="/auth/logon/apikey.html">/auth/logon/apikey.html</a>    - Website for API Key Authentication             (will redirect if logged on)
-<a href="/auth/logon/apifile.html">/auth/logon/apifile.html</a>   - Website for API Key File Upload Authentication (will redirect if logged on)
+<a href="/logon/logon.html">/logon/logon.html</a>          - Website for PAM Authentication                 (will redirect if logged on)
+<a href="/logon/challenge.html">/logon/challenge.html</a>      - Website for Email Challenge Authentication     (will redirect if logged on)
+<a href="/logon/apikey.html">/logon/apikey.html</a>         - Website for API Key Authentication             (will redirect if logged on)
+<a href="/logon/apifile.html">/logon/apifile.html</a>        - Website for API Key File Upload Authentication (will redirect if logged on)
 
-<a href="/auth/logon/su.html">/auth/logon/su.html</a>        - Website for Admin SU (Switch User)
-<a href="/auth/logon/return.html">/auth/logon/return.html</a>    - Website for Admin SU Return
-<a href="/auth/logon/logoff.html">/auth/logon/logoff.html</a>    - Website for Logoff
+<a href="/logon/su.html">/logon/su.html</a>             - Website for Admin SU (Switch User)
+<a href="/logon/return.html">/logon/return.html</a>         - Website for Admin SU Return
+<a href="/logon/logoff.html">/logon/logoff.html</a>         - Website for Logoff
 
 <a href="/auth/key">/auth/key</a>                  - Show User Info
 <a href="/auth/info">/auth/info</a>                 - Show User and Site Info (used on auth websites)
-<a href="/auth/rekey">/auth/rekey</a>                - Reset API Key
+/auth/rekey                - Generate a new API key (POST; the key is only shown once, see /index.html)
 
-<h4>API Key</h4><p id=akey>Pending server response...</p><h4>Logged on User Information</h4><p id=info>Pending server response...</p>
+<h4>Logged on User Information</h4><p id=info>Pending server response...</p>
 
-<h3>Endpoints below require an API key, key is ignored if a valid web session is found.</h3><h4>Access Endpoints</h4>/auth/&lt;apikey&gt;/access/list/&lt;user&gt;                    - Lists Accesses (requires admin for other users)
+<h3>Endpoints below require an API key (in the path, or an Authorization: Bearer header).  Use - as the key to use your web session instead; the examples below do.</h3><h4>Access Endpoints</h4>/auth/&lt;apikey&gt;/access/list/&lt;user&gt;                    - Lists Accesses (requires admin for other users)
 /auth/&lt;apikey&gt;/access/add/&lt;user&gt;/&lt;access&gt;/&lt;value&gt;    - Add/Modify Access (requires admin)
 /auth/&lt;apikey&gt;/access/remove/&lt;user&gt;/&lt;access&gt;/&lt;value&gt; - Remove Access (requires admin)<h4>Course Schedule Endpoints</h4>
 
 <h4>Schedules</h4>
 <b>Semester Information</b>
 /sched/&lt;apikey&gt;/school/&lt;schoolname&gt;
-example: <a href="/sched/aaaa/school/SCHOOL1">/sched/&lt;apikey&gt;/school/SCHOOL1</a>
-example: <a href="/sched/aaaa/school/SCHOOL2">/sched/&lt;apikey&gt;/school/SCHOOL2</a>
+example: <a href="/sched/-/school/SCHOOL1">/sched/&lt;apikey&gt;/school/SCHOOL1</a>
+example: <a href="/sched/-/school/SCHOOL2">/sched/&lt;apikey&gt;/school/SCHOOL2</a>
 
 <b>Course Information</b>
 /sched/&lt;apikey&gt;/course/&lt;coursenum&gt;
-example: <a href="/sched/aaaa/course/COURSE1">/sched/&lt;apikey&gt;/course/COURSE1</a>
+example: <a href="/sched/-/course/COURSE1">/sched/&lt;apikey&gt;/course/COURSE1</a>
 /sched/&lt;apikey&gt;/course/&lt;coursenum&gt;/&lt;instructor&gt;
-example: <a href="/sched/aaaa/course/COURSE1/INSTRUCTOR1">/sched/&lt;apikey&gt;/course/COURSE1/INSTRUCTOR1</a>
+example: <a href="/sched/-/course/COURSE1/INSTRUCTOR1">/sched/&lt;apikey&gt;/course/COURSE1/INSTRUCTOR1</a>
 /sched/&lt;apikey&gt;/course/&lt;schoolname&gt;
-example: <a href="/sched/aaaa/course/SCHOOL2">/sched/&lt;apikey&gt;/course/SCHOOL2</a>
+example: <a href="/sched/-/course/SCHOOL2">/sched/&lt;apikey&gt;/course/SCHOOL2</a>
 
 <b>Current user Info and Class Schedules</b>
 /sched/&lt;apikey&gt;/user
-example: <a href="/sched/aaaa/user">/sched/&lt;apikey&gt;/user</a>
+example: <a href="/sched/-/user">/sched/&lt;apikey&gt;/user</a>
 /sched/&lt;apikey&gt;/user/&lt;user&gt;
-example: <a href="/sched/aaaa/user/USER1">/sched/&lt;apikey&gt;/user/USER1</a>
+example: <a href="/sched/-/user/USER1">/sched/&lt;apikey&gt;/user/USER1</a>
 
 <b>Student Info and Class Schedules</b>
 /sched/&lt;apikey&gt;/student
-example: <a href="/sched/aaaa/student">/sched/&lt;apikey&gt;/student</a>
+example: <a href="/sched/-/student">/sched/&lt;apikey&gt;/student</a>
 /sched/&lt;apikey&gt;/student/&lt;username&gt;
-example: <a href="/sched/aaaa/student/STUDENT1">/sched/&lt;apikey&gt;/student/STUDENT1</a>
+example: <a href="/sched/-/student/STUDENT1">/sched/&lt;apikey&gt;/student/STUDENT1</a>
 /sched/&lt;apikey&gt;/student/&lt;username&gt;/&lt;course&gt;
-example: <a href="/sched/aaaa/student/STUDENT1/COURSE1">/sched/&lt;apikey&gt;/student/STUDENT1/COURSE1</a>
+example: <a href="/sched/-/student/STUDENT1/COURSE1">/sched/&lt;apikey&gt;/student/STUDENT1/COURSE1</a>
 /sched/&lt;apikey&gt;/student/&lt;schoolname&gt;
-example: <a href="/sched/aaaa/student/SCHOOL2">/sched/&lt;apikey&gt;/student/SCHOOL2</a>
+example: <a href="/sched/-/student/SCHOOL2">/sched/&lt;apikey&gt;/student/SCHOOL2</a>
 
 <b>Instructor Info and Class Schedules</b>
 /sched/&lt;apikey&gt;/instructor
-example: <a href="/sched/aaaa/instructor">/sched/&lt;apikey&gt;/instructor</a>
+example: <a href="/sched/-/instructor">/sched/&lt;apikey&gt;/instructor</a>
 /sched/&lt;apikey&gt;/instructor/&lt;instructor&gt;
-example: <a href="/sched/aaaa/instructor/INSTRUCTOR1">/sched/&lt;apikey&gt;/instructor/INSTRUCTOR1</a>
+example: <a href="/sched/-/instructor/INSTRUCTOR1">/sched/&lt;apikey&gt;/instructor/INSTRUCTOR1</a>
 /sched/&lt;apikey&gt;/instructor/&lt;instructor&gt;/&lt;course&gt;
-example: <a href="/sched/aaaa/instructor/INSTRUCTOR1/COURSE1">/sched/&lt;apikey&gt;/instructor/INSTRUCTOR1/COURSE1</a>
+example: <a href="/sched/-/instructor/INSTRUCTOR1/COURSE1">/sched/&lt;apikey&gt;/instructor/INSTRUCTOR1/COURSE1</a>
 /sched/&lt;apikey&gt;/instructor/&lt;instructor&gt;/&lt;course&gt;/&lt;section&gt;
-example: <a href="/sched/aaaa/instructor/INSTRUCTOR1/COURSE1/2141">/sched/&lt;apikey&gt;/instructor/INSTRUCTOR1/COURSE1/2141</a>
+example: <a href="/sched/-/instructor/INSTRUCTOR1/COURSE1/2141">/sched/&lt;apikey&gt;/instructor/INSTRUCTOR1/COURSE1/2141</a>
 /sched/&lt;apikey&gt;/instructor/&lt;schoolname&gt;
-example: <a href="/sched/aaaa/instructor/SCHOOL2">/sched/&lt;apikey&gt;/instructor/SCHOOL2</a>
+example: <a href="/sched/-/instructor/SCHOOL2">/sched/&lt;apikey&gt;/instructor/SCHOOL2</a>
 
 <b>Room Utilization</b>
 /sched/&lt;apikey&gt;/room/&lt;roomname&gt;
-example: <a href="/sched/aaaa/room/ROOM1">/sched/&lt;apikey&gt;/room/ROOM1</a>
+example: <a href="/sched/-/room/ROOM1">/sched/&lt;apikey&gt;/room/ROOM1</a>
 
 <b>Department Listings</b>
 /sched/&lt;apikey&gt;/department/&lt;schoolname&gt;
-example: <a href="/sched/aaaa/department/SCHOOL1">/sched/&lt;apikey&gt;/department/SCHOOL1</a>
-example: <a href="/sched/aaaa/department/SCHOOL2">/sched/&lt;apikey&gt;/department/SCHOOL2</a>
+example: <a href="/sched/-/department/SCHOOL1">/sched/&lt;apikey&gt;/department/SCHOOL1</a>
+example: <a href="/sched/-/department/SCHOOL2">/sched/&lt;apikey&gt;/department/SCHOOL2</a>
 </pre>
 <br><br><br>
 <script>
 
 fetch('/auth/key')
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    return response.json();
-  })
+  .then(response => response.json())
   .then(result => {
-    document.getElementById('info').innerHTML = JSON.stringify(result, null, 2);
-    console.log(result);
-    console.log(result.data.apikey);
-
-    document.getElementById('akey').innerHTML = result.data.apikey;
-
-    if (result.data.apikey) {
-      const links = document.querySelectorAll('a[href]');
-      links.forEach(link => {
-        const href = link.getAttribute('href');
-        const newHref = href.replace('/aaaa/', '/' + result.data.apikey + '/');
-
-        if (newHref !== href) {
-          link.setAttribute('href', newHref);
-          link.textContent = link.textContent.replace('<apikey>', result.data.apikey);
-        }
-      });
-    }
+    document.getElementById('info').textContent = JSON.stringify(result, null, 2);
   })
   .catch(error => {
     console.error('Fetch error:', error);
-});
+  });
 
 </script>

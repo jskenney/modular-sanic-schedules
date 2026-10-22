@@ -1,23 +1,14 @@
 #!/usr/bin/python3
 
-import os, importlib.util
+# MySQL helper for the schedule scripts.  It uses PyMySQL (installed with
+# modular-sanic, through aiomysql) and the database settings from
+# modular-sanic's .env file (see sanic_env.py).
 
-if 'SANIC_CONFIG_FILE' in os.environ:
-    spec = importlib.util.spec_from_file_location("myconfigs", os.environ['SANIC_CONFIG_FILE'])
-    config = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(config)
-else:
-    import config
-
-dbuser = config.db_settings['DB_USER']
-dbpass = config.db_settings['DB_PASS']
-dbhost = config.db_settings['DB_HOST']
-dbname = config.db_settings['DB_NAME']
+import pymysql
+from sanic_env import db_settings
 
 # To import from this library,
-#   1. edit the configuration items above
-#   2. from your python program add
-#      from db4 import db
+#   from db6 import db
 
 # To use the db object
 #   Example 1.
@@ -25,34 +16,15 @@ dbname = config.db_settings['DB_NAME']
 #   Example 2.
 #     values = ("user1", "test", )  <-- note the final / extra comma
 #     col, data, lastrow, error, warnings = db.query("select * from session where user=%s and password=%s", values)
+#   query_dict returns (rows, error, warnings), each row a dict of strings.
 
 # Database connection class
 class connectdb:
-    def __init__(self, dbuser, dbpass, dbhost, dbname):
-        try:
-            import mysql.connector as dblink
-            self.dblink = dblink
-            from mysql.connector.errors import Error
-            self.db = dblink.connect(user=dbuser, password=dbpass, host=dbhost, database=dbname, charset='utf8', collation='utf8_general_ci', use_unicode=True)
-            try:
-                self.db.autocommit(True)         # Different version of connector handle
-            except:                         # the autocommit portion differently
-                self.db.autocommit = True
-            self.mode = "connector"
-        except:
-            import MySQLdb as dblink
-            self.dblink = dblink
-            self.db = dblink.connect(dbhost, dbuser, dbpass, dbname)
-            try:
-                self.db.autocommit(True)
-            except:
-                self.db.autocommit = True
-            self.mode = "mysqldb"
-        # Let there be UTF-8
-        if self.mode == "mysqldb":
-            self.db.query("set character_set_client='utf8'")
-            self.db.query("set character_set_results='utf8'")
-            self.db.query("set collation_connection='utf8_general_ci'")
+    def __init__(self, dbuser, dbpass, dbhost, dbname, dbport=3306):
+        self.dblink = pymysql
+        self.db = pymysql.connect(user=dbuser, password=dbpass, host=dbhost, port=dbport, database=dbname,
+                                  charset='utf8mb4', autocommit=True)
+        self.mode = "pymysql"
 
     # GRADING: return tables
     def getTables(self):
@@ -115,37 +87,37 @@ class connectdb:
             results = int(data[0][0])
         return results
 
-    # Query the database
+    # Query the database, returns (columns, rows, lastrowid, error, warnings).
+    # error is '' on success; warnings is None, or the server's warnings.
     def query(self, sql, *prepare):
-        self.db.get_warnings = True
         cursor = self.db.cursor()
         error = ""
+        warning = None
         try:
             if prepare:
                 cursor.execute(sql, prepare[0])
             else:
                 cursor.execute(sql)
-            #db.commit()        # Necessary if not autocommit
+            # Rows are already buffered, so the warnings can be read now
+            if getattr(cursor._result, 'warning_count', 0):
+                warning = self.db.show_warnings()
         except self.dblink.Error as e:
             error = str(e)      # DB will prevent issue
-            #db.rollback()      # Necessary if not autocommit.
-        try:
-            warning = self.db.info()
-        except:
-            warning = cursor.messages
 
         lastrow = cursor.lastrowid
         columns = cursor.description
 
         try:                    # Check for no results due to an error in SQL
             data = cursor.fetchall()
-        except:
+        except self.dblink.Error:
+            data = []
+        if columns is None:
             data = []
             columns = []
 
         cursor.close()
 
-        return columns, data, lastrow, error, warning
+        return columns, list(data), lastrow, error, warning
 
     def query_dict(self, sql, *prepare):
         if prepare:
@@ -162,6 +134,7 @@ class connectdb:
             results.append(newline)
         return results
 
+    # Values are returned as strings (None becomes 'None'), as before
     def row_to_dict(self, columns, data):
         results = {}
         for column in columns:
@@ -277,4 +250,4 @@ class connectdb:
                 print('</pre>')
 
 # Establish the connection to the Database
-db = connectdb(dbuser, dbpass, dbhost, dbname)
+db = connectdb(db_settings['DB_USER'], db_settings['DB_PASS'], db_settings['DB_HOST'], db_settings['DB_NAME'], db_settings['DB_PORT'])
