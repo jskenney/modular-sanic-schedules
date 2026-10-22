@@ -4,4 +4,16 @@ sched tables (see setup/sched_tables.sql) and load them into memcached.
 You will need another script to load semester course schedules into
 the MySQL tables following the table layout provided.
 
-Add a soft link to your config.py file in this directory.
+Settings (DB_HOST, DB_PORT, DB_USER, DB_PASS, DB_NAME, MEMCACHED_HOST,
+MEMCACHED_PORT) are read from modular-sanic's .env file, found by searching
+upward from this directory, or named with ENV_FILE=/path/to/.env.  The
+scripts need pymysql, pymemcache and environs, which modular-sanic's
+requirements already install; VENV names its virtual environment
+(default ../venv).
+
+  ./start-encache.sh    load (or reload) the schedules into memcached
+  ./start-decache.sh    remove them again
+
+Values are stored as JSON.  After upgrading from a version that stored
+Python literals, run ./start-encache.sh once so every key is rewritten
+(the API still reads the old format until then).

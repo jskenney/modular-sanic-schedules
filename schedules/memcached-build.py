@@ -1,21 +1,25 @@
 DEBUG_ALLOW = True
 
-import os, importlib.util, time, sys, json, copy
+import time, json
 
-if 'SANIC_CONFIG_FILE' in os.environ:
-    spec = importlib.util.spec_from_file_location("myconfigs", os.environ['SANIC_CONFIG_FILE'])
-    config = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(config)
-else:
-    import config
+# Settings come from modular-sanic's .env (DB_* and MEMCACHED_*), see sanic_env.py
+from sanic_env import memcached_settings
 
 ###############################################################################
 from db6 import db as mysql
 print(time.asctime(time.localtime(time.time())), "Connected to MySQL")
 
 ###############################################################################
+# Values are stored as JSON, which the schedules API reads with json.loads
+# (flags 0: aiomcache refuses values with other flags)
+class JsonSerde:
+    def serialize(self, key, value):
+        return json.dumps(value, separators=(',', ':')).encode('utf-8'), 0
+    def deserialize(self, key, value, flags):
+        return json.loads(value)
+
 from pymemcache.client import base as mcachesrv
-mcache = mcachesrv.Client((config.memcached_settings['MEMCACHED_SERVER'], config.memcached_settings['MEMCACHED_PORT']))
+mcache = mcachesrv.Client((memcached_settings['MEMCACHED_HOST'], memcached_settings['MEMCACHED_PORT']), serde=JsonSerde())
 print(time.asctime(time.localtime(time.time())), "Connected to MemCached")
 
 ###############################################################################
